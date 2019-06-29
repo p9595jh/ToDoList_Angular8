@@ -1,0 +1,14 @@
+<section class="jumbotron text-center">
+  <div class="container">
+    <h1 class="jumbotron-heading">MAIN</h1><br/>
+    <p *ngIf="!userService.loggedIn()">
+      <a routerLink="/register" class="btn btn-primary my-2">Register</a>
+      <a routerLink="/login" class="btn btn-secondary my-2">Login</a>
+    </p>
+    <div *ngIf="userService.loggedIn()">
+      <h3>Welcome, {{user?.userid}}</h3><br/>
+      <a routerLink="/list" class="btn btn-primary my-2">List</a>
+      <button (click)="userService.logout()" class="btn btn-secondary my-2">Logout</button>
+    </div>
+  </div>
+</section>
