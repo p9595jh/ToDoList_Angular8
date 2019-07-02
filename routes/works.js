@@ -14,23 +14,12 @@ router.get('/', passport.authenticate('jwt', {session: false}), (req, res, next)
 });
 
 router.post('/', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    const newWork = {
+    const newWork = new Work({
         date: req.body.date,
         work: req.body.work,
         userid: req.user.userid
-    };
-    // Work.addWork(newWork, (err, work) => {
-    //     console.log('im a bad guy');
-    //     if ( err ) {
-    //         res.status(500).json(err);
-    //     }
-    //     else {
-    //         console.log(work);
-    //         work.success = true;
-    //         res.status(201).json(work);
-    //     }
-    // });
-    Work.insertMany([newWork], (err, works) => {
+    });
+    Work.addWork(newWork, (err, work) => {
         if ( err ) res.status(500).json(err);
         else res.status(201).json({success: true});
     });
