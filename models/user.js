@@ -20,28 +20,13 @@ const UserSchema = mongoose.Schema({
 
 const User = module.exports = mongoose.model('User', UserSchema);
 
-module.exports.getUserById = (id, callback) => {
-  User.findById(id, callback);
+module.exports.addUser = async (newUser) => {
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(newUser.password, salt);
+  newUser.password = hash;
+  return newUser.save();
 }
 
-module.exports.getUserByUserId = (userid, callback) => {
-  const query = {userid: userid};
-  User.findOne(query, callback);
-}
-
-module.exports.addUser = (newUser, callback) => {
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (err, hash) => {
-      //if(err) throw err;
-      newUser.password = hash;
-      newUser.save(callback);
-    });
-  });
-}
-
-module.exports.comparePassword = (candidatePassword, hash, callback) => {
-  bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
-    //if(err) throw err;
-    callback(null, isMatch);
-  });
+module.exports.comparePassword = async (candidatePassword, hash) => {
+  return bcrypt.compare(candidatePassword, hash);
 }

@@ -6,23 +6,27 @@ const Work = require('../models/work');
 
 // =================================
 
-router.get('/', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    Work.find({userid: req.user.userid}, (err, works) => {
-        if ( err ) res.status(500).json(err);
-        else res.json(works);
-    });
+router.get('/', passport.authenticate('jwt', {session: false}), async (req, res, next) => {
+    try {
+        const works = await Work.find({userid: req.user.userid});
+        res.json(works);
+    } catch(err) {
+        res.status(500).json(err);
+    }
 });
 
-router.post('/', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+router.post('/', passport.authenticate('jwt', {session: false}), async (req, res, next) => {
     const newWork = new Work({
         date: req.body.date,
         work: req.body.work,
         userid: req.user.userid
     });
-    Work.addWork(newWork, (err, work) => {
-        if ( err ) res.status(500).json(err);
-        else res.status(201).json({success: true});
-    });
+    try {
+        const work = await newWork.save();
+        res.status(201).json({success: true});
+    } catch(err) {
+        res.status(500).json(err);
+    }
 });
 
 router.get('/:_id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
